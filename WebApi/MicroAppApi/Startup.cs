@@ -50,6 +50,7 @@ namespace MicroAppApi
                 .AllowAnyHeader()
             );
 
+            app.UseStaticFiles();
             app.UseMvc();
         }
     }
