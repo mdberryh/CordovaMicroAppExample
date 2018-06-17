@@ -150,7 +150,7 @@ var app = {
                 };
           
                 // Create a new Blob and write it to log.txt.
-                var blob = new Blob(['<html><body><h1>This is my web app</h1></body>></html>'], {type: 'text/plain'});
+                var blob = new Blob(['<html><body><p>First name: <input data-bind="value: firstName" /></p><p>Last name: <input data-bind="value: lastName" /></p><h2>Hello, <span data-bind="text: fullName"> </span>!</h2><script type=\'text/javascript\' src=\'https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js\'></script><script>var ViewModel = function(first, last) {this.firstName = ko.observable(first);this.lastName = ko.observable(last);this.fullName = ko.pureComputed(function() {return this.firstName() + " " + this.lastName();}, this);};ko.applyBindings(new ViewModel(\"Planet\", \"Earth\")); </script></body></html>'], {type: 'text/plain'});
           
                 fileWriter.write(blob);
           
