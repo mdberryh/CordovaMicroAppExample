@@ -136,7 +136,7 @@ var app = {
 
         function writeFile(fs) {
 
-            fs.root.getFile('log.txt', {create: true}, function(fileEntry) {
+            fs.root.getFile('log.html', {create: true}, function(fileEntry) {
           
               // Create a FileWriter object for our FileEntry (log.txt).
               fileEntry.createWriter(function(fileWriter) {
@@ -150,7 +150,7 @@ var app = {
                 };
           
                 // Create a new Blob and write it to log.txt.
-                var blob = new Blob(['Lorem Ipsum'], {type: 'text/plain'});
+                var blob = new Blob(['<html><body><h1>This is my web app</h1></body>></html>'], {type: 'text/plain'});
           
                 fileWriter.write(blob);
           
@@ -161,18 +161,21 @@ var app = {
           }
           function onInitFs(fs) {
 
-            fs.root.getFile('log.txt', {}, function(fileEntry) {
+            fs.root.getFile('log.html', {}, function(fileEntry) {
           
               // Get a File object representing the file,
               // then use FileReader to read its contents.
               fileEntry.file(function(file) {
                  var reader = new FileReader();
-          
+                console.log(file);
                  reader.onloadend = function(e) {
+                     console.log(fileEntry.toURL());
+                     window.location = fileEntry.toURL();
                    var txtArea = document.createElement('textarea');
                    txtArea.value = this.result;
                    console.log(this.result);
-                   
+                   console.log(this);
+                   console.log(e);
                    document.body.appendChild(txtArea);
                  };
           
