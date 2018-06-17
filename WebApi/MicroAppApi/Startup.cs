@@ -25,7 +25,9 @@ namespace MicroAppApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();    
+            services.AddCors();
+
+            services.AddMvc();
             services.AddSingleton<IConfiguration>(Configuration);
             //Convert the JSON to a PRogramSettings object.
 
@@ -37,11 +39,16 @@ namespace MicroAppApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(builder =>
+                builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+            );
 
             app.UseMvc();
         }
