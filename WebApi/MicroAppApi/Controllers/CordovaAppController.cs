@@ -32,10 +32,9 @@ namespace MicroAppApi.Controllers
             _configuration = Configuration;
         }
 
-        // GET api/values
-        [HttpGet]
-        public IEnumerable<ClientAppFileModel> Get()
+        private IEnumerable<ClientAppFileModel> GetClientAppsFiles()
         {
+
             ProgramSettings ps = new ProgramSettings();
             // _configuration.GetSection("ProgramSettings").Bind(ps);
             string path = Path.Combine(_hostingEnvironment.ContentRootPath, "ClientApp/React");
@@ -43,7 +42,7 @@ namespace MicroAppApi.Controllers
             System.Diagnostics.Debug.WriteLine(path);
             string[] entries = Directory.GetFileSystemEntries(path, "*", SearchOption.AllDirectories);
 
-List<ClientAppFileModel> files = new List<ClientAppFileModel>();
+            List<ClientAppFileModel> files = new List<ClientAppFileModel>();
             foreach (var elem in entries)
             {
                 files.Add(new ClientAppFileModel(elem, _hostingEnvironment.ContentRootPath));
@@ -51,26 +50,37 @@ List<ClientAppFileModel> files = new List<ClientAppFileModel>();
             }
             return files;
         }
+        // GET api/values
+        [HttpGet]
+        public IEnumerable<ClientAppFileModel> Get()
+        {
+            return GetClientAppsFiles();
+        }
 
         // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{*id}")]
+        public string Get(string id)
         {
+            System.Diagnostics.Debug.WriteLine(id);
             //This function should return an object that contains a list of files in the 
             //  client app's dir with their paths and hashes.
 
             // ProgramSettings ps = new ProgramSettings();
             // _configuration.GetSection("ProgramSettings").Bind(ps);
             //             string path = ps.ClientAppRelativePath;
+            //_hostingEnvironment.WebRootPath
+            System.Diagnostics.Debug.WriteLine("in get function");
+            System.Diagnostics.Trace.WriteLine(id);
+            Console.WriteLine($"test: {id}");
             string path = Path.Combine(_hostingEnvironment.ContentRootPath, "ClientApp/React");
             string[] entries = Directory.GetFileSystemEntries(path, "*", SearchOption.AllDirectories);
+//return id;
+            var usersFile = GetClientAppsFiles().First(o => o.FilePath.ToLower() == id.ToLower());
 
-            foreach (var elem in entries)
-            {
-                System.Diagnostics.Debug.WriteLine(elem);
-            }
 
-            return "value";
+            Console.WriteLine(usersFile.ReadFileToString());
+
+            return usersFile.ReadFileToString();
         }
 
         // POST api/values

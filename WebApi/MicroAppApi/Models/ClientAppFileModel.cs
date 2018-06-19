@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace MicroAppApi.Models
 {
@@ -18,11 +19,18 @@ namespace MicroAppApi.Models
         public string FilePath { get; set; }
         public string Hash { get; set; }
 
+        private string _contentFullServerPath = null;
+
         public ClientAppFileModel(string path, string contentRootPath)
         {
             this.Filename = Path.GetFileName(path);
             string relativePath = Path.GetRelativePath(contentRootPath, path);
             this.FilePath = relativePath;
+
+
+            _contentFullServerPath = path;
+            Console.WriteLine($"Passed in full path: {_contentFullServerPath}");
+
             try
             {
                 SHA256 hashfunction = SHA256.Create();
@@ -46,6 +54,53 @@ namespace MicroAppApi.Models
 
 
         }
+
+        public string ReadFileToString()
+        {
+            if (String.IsNullOrWhiteSpace(_contentFullServerPath))
+            {
+                return null;
+            }
+
+            try
+            {
+
+                // Byte[] bytes = File.ReadAllBytes("path");
+                // String file = Convert.ToBase64String(bytes);
+
+                FileStream fileStream = new FileStream(_contentFullServerPath, FileMode.Open);
+                using (StreamReader reader = new StreamReader(fileStream))
+                {
+                    string line = reader.ReadToEnd();
+
+                    var isBinaryFile = line.Contains("\0\0");
+                    //https://stackoverflow.com/questions/910873/how-can-i-determine-if-a-file-is-binary-or-text-in-c
+
+                    if (isBinaryFile)
+                    {
+                        //We have a binary file...we can't remove any bytes just read the file in exactly as byte[] and pass back...
+                        Byte[] bytes = File.ReadAllBytes(_contentFullServerPath);
+                        String file = Convert.ToBase64String(bytes);
+                        return file;
+                    }
+                    else
+                    {
+                        //we have a text file...we can remove any odd bytes
+
+                        string s = "søme string";
+                        s = Regex.Replace(line, @"[^\u0000-\u007F]+", string.Empty);
+                        return s;
+                    }
+                }
+            }
+            catch (Exception error)
+            {
+                //TODO LOG THIS ERROR!!
+            }
+            return null;
+
+        }
+
 
         public string ConvertByteArrayToString(byte[] array)
         {

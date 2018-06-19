@@ -47,28 +47,46 @@ var app = {
     },
 
     customGetFileExample: function () {
-        var customGetFileList = function () {
+        var customGetFileList = function (url) {
+            var promise = new Promise(function(resolve, reject){
 
-            var url = 'http://10.0.2.2/API/ClientApp/';
-            url = 'http://localhost:5000/Api/CordovaApp/';
+            //var url = 'http://10.0.2.2/API/ClientApp/';
+            //url = 'http://localhost:5000/Api/CordovaApp/';
             var oReq = new XMLHttpRequest();
             // Make sure you add the domain name to the Content-Security-Policy <meta> element.
             //oReq.open("GET", "http://cordova.apache.org/static/img/cordova_bot.png", true);
 
             oReq.open("GET", url);
+            //oReq.setRequestHeader('Content-Type','text/html')
             oReq.onload = function (oEvent) {
 
                 console.log(oReq.response);
                 console.log(oReq.responseText);
+                resolve(oReq.responseText);
             };
             oReq.send(null);
+
+            });
+            return promise;
         }
 
 
         var url = 'http://10.0.2.2:5000/API/ClientApp/';
 
+        url = 'http://localhost:5000/Api/CordovaApp/';
 
-        customGetFileList();
+        customGetFileList(url).then(function(data){
+            console.log("Promise finished fetching file");
+            console.log(data);
+        });
+
+
+        url = 'http://localhost:5000/Api/"ClientApp/React/index.html"';
+
+        customGetFileList(url).then(function(data){
+            console.log("Promise finished fetching file");
+            console.log(data);
+        });
 
         return;
 
@@ -170,7 +188,11 @@ var app = {
                 console.log(file);
                  reader.onloadend = function(e) {
                      console.log(fileEntry.toURL());
-                     window.location = fileEntry.toURL();
+
+                     
+                     //window.location = fileEntry.toURL();
+
+
                    var txtArea = document.createElement('textarea');
                    txtArea.value = this.result;
                    console.log(this.result);

@@ -47,11 +47,18 @@ namespace MicroAppApi
 
             app.UseCors(builder =>
                 builder.AllowAnyOrigin()
-                .AllowAnyHeader()
+                .AllowAnyHeader().AllowAnyMethod()
             );
+//https://stackoverflow.com/questions/323397/file-path-as-mvc-route-argument
+            //app.UseStaticFiles();
+            app.UseMvc(routes =>
+                {
 
-            app.UseStaticFiles();
-            app.UseMvc();
+//    routes.MapRoute("/api/CordovaApp", "{controller=CordovaApp}/{action=Index}/{*id}");
+                    routes.MapRoute(
+                       name: "default",
+                          template: "{controller=Home}/{action=Index}/{id?}");
+                });
         }
     }
 }
